@@ -1,0 +1,20 @@
+version: 2
+
+sources:
+  - name: ga_data
+    schema: '136443498'
+    database: s4a-ga-raw-data-prd
+    tables:
+      - name: ga_sessions_*
+
+  - name: cy_data
+    schema:  cybersource
+    database: s4a-digital-dwh-prd
+    tables:
+      - name: cbs_ga_fb_aggregated
+
+  - name: forecast
+    schema:  cybersource
+    database: s4a-digital-dwh-prd
+    tables:
+      - name: Forecast_turnover_sessions

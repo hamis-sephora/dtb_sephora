@@ -1,0 +1,12 @@
+
+
+version: 2
+
+models:
+  - name: int_report_session
+    description: >
+      Table de consolidation des données de Trafic Website, Mobile, App, RU , Forecast et Trafic Redressé. La consolidation 
+      permet ensuite de prd_session dédiée au reporting.  
+
+
+

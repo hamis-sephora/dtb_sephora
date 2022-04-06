@@ -1,0 +1,14 @@
+
+
+version: 2
+models:
+  - name: prd_all_trafic
+    description: >
+      Consolidation du trafic GA , tout device confondu , tout pays confondu hors trafic 
+      redressé. Granularité du trafic par Levier d'acquisition et par jour.
+                          
+models:
+  - name: prd_session
+    description: >
+      Consolidation du trafic , trafic redressé, trafic forecast , par plateforme et par pays. 
+      Granularité des données à la semaine. 

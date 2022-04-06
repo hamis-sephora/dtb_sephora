@@ -12,9 +12,33 @@ sources:
     database: s4a-digital-dwh-prd
     tables:
       - name: cbs_ga_fb_aggregated
+      - name: cbs_reports_PART
 
   - name: forecast
     schema:  cybersource
     database: s4a-digital-dwh-prd
     tables:
-      - name: Forecast_turnover_sessions
+      - name: forecast_data
+
+  - name: cost_data
+    schema:  eme_media_data
+    database: s4a-digital-dwh-prd
+    tables:
+      - name: adwords_data  
+      - name: facebook_data  
+      - name: snpachat_data  
+      - name: exchange_data  
+      - name: orga_adwords  
+      - name: orga_fcbk  
+      - name: orga_snap  
+      - name: orga_snapchat_campaign  
+
+
+  - name: de
+    schema:  eme_media_data
+    database: s4a-digital-dwh-prd
+    tables:
+      - name: de_database
+
+
+

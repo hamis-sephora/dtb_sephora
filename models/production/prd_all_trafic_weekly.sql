@@ -1,0 +1,35 @@
+{{ config(materialized='table') }}
+
+with data_info as ( 
+select 
+    extract (week(sunday) from date ) as week_sunday_number, 
+    extract (year from date) as year,
+    country, 
+    channel_grouping, 
+    platform , 
+    sum(sessions) as sessions,
+    sum(sessions_retrieved) as sessions_retrieved , 
+    sum(transactions) as transactions , 
+    sum(revenue) as revenue, 
+    sum(session_addtocart) as session_addtocart
+from {{ref('prd_all_trafic')}} 
+group by 1,2,3,4,5
+)
+select 
+    week_sunday_number, 
+    country, 
+    channel_grouping, 
+    platform,
+    sum (case when year=2021 then sessions end ) as sessions_2021,
+    sum (case when year=2022 then sessions end ) as sessions_2022,
+    sum (case when year=2021 then sessions_retrieved end) as sessions_retrieved_2021,
+    sum (case when year=2022 then sessions_retrieved end) as sessions_retrieved_2022,
+    sum (case when year=2021 then transactions end ) as transactions_2021,
+    sum (case when year=2022 then transactions end) as transactions_2022,
+    sum (case when year=2021 then transactions end ) as revenue_2021,
+    sum (case when year=2022 then transactions end ) as revenue_2022, 
+    sum (case when year=2021 then session_addtocart end ) as session_addtocart_2021,    
+    sum (case when year=2022 then session_addtocart end ) as session_addtocart_2022
+    from data_info
+    group by 1,2,3,4
+

@@ -5,6 +5,7 @@ with data as (
 
 select 
     Date as date, 
+    extract(week(sunday) from date) as week, 
     country, 
     channel , 
     platform,
@@ -32,6 +33,7 @@ select
 
  select 
      Date as date,
+    extract(week(sunday) from date) as week, 
      UPPER(country) as country, 
      channel, 
      platform,
@@ -46,6 +48,7 @@ select
 UNION ALL 
   select
      Date as date,
+    extract(week(sunday) from date) as week, 
      UPPER(country) as country, 
      channel, 
      platform,
@@ -59,11 +62,12 @@ UNION ALL
 
 select
       date, 
+      extract(week(sunday) from date) as week, 
       country, 
       channel, 
-      case when channel in ('Paid Search Non Brand', 'Paid Search Brand','Social', 'Retargeting', 'media') then 'PAID MEDIA'
-           when channel in ('Emailing') then 'OWN MEDIA'
-           else 'ORGANIC'
+      case when channel in ('Direct', 'Organic Search','Referral', '(Other)', 'App') then 'ORGANIC'
+           when channel in ('Emailing','Eprm') then 'OWN MEDIA'
+           else 'PAID MEDIA'
            end as channel_grouping, 
       platform, 
       sessions, 
@@ -80,6 +84,7 @@ UNION ALL
 
 select 
        Date, 
+       extract(week(sunday) from date) as week, 
        country, 
        channel , 
        channel_grouping,  

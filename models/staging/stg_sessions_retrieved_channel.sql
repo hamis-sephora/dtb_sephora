@@ -10,20 +10,20 @@ select
 cy_transaction_data as (
     SELECT
       Transaction_Date_Local,
-       IF (Sales_Channel="null", "unidentified", Sales_Channel) AS device_cs,
+       IF (Sales_Channel='null', 'unidentified', Sales_Channel) AS device_cs,
         LOWER( IF
             (Merchant_Defined_Data12 IS NOT NULL,
             Merchant_Defined_Data12,
             CASE
-                WHEN Merchant_ID IN ("sephora_fr", "sephora_fr_cc") THEN "FR"
-                WHEN Merchant_ID IN ("sephora_it") THEN "IT"
-                WHEN Merchant_ID IN ("sephora_se") THEN "SE"
-                WHEN Merchant_ID IN ("sephora_dk") THEN "DK"
-                WHEN Merchant_ID IN ("sephora_ge","sephora_ge_cc") THEN "DE"
-                WHEN Merchant_ID IN ("sephora_ro","sephora_ro_cc") THEN "RO"
-                WHEN Merchant_ID IN ("sephora_gr") THEN "GR"
-                WHEN Merchant_ID IN ("sephora_gr_cc") THEN "GR"
-            ELSE "error" END )) AS country,
+                WHEN Merchant_ID IN ('sephora_fr', 'sephora_fr_cc') THEN 'FR'
+                WHEN Merchant_ID IN ('sephora_it') THEN 'IT'
+                WHEN Merchant_ID IN ('sephora_se') THEN 'SE'
+                WHEN Merchant_ID IN ('sephora_dk') THEN 'DK'
+                WHEN Merchant_ID IN ('sephora_ge','sephora_ge_cc') THEN 'DE'
+                WHEN Merchant_ID IN ('sephora_ro','sephora_ro_cc') THEN 'RO'
+                WHEN Merchant_ID IN ('sephora_gr') THEN 'GR'
+                WHEN Merchant_ID IN ('sephora_gr_cc') THEN 'GR'
+            ELSE 'error' END )) AS country,
       Merchant_ID,
       Merchant_Reference_Number AS TransactionId,
     FROM
@@ -32,7 +32,7 @@ cy_transaction_data as (
       ---Transaction_Date_Local = DATE_SUB(catchup_date, INTERVAL 0 day)
      --- and Sales_Channel is not null 
        Transaction_Date_Local >= date_trunc(current_date-365, year)
-      AND Active_Profile_Decision IN ("ACCEPT", "REVIEW")
+      AND Active_Profile_Decision IN ('ACCEPT', 'REVIEW')
     GROUP BY 1,2,3,4,5
 
 ) , 
@@ -75,8 +75,8 @@ SELECT
 --- Consolidate Data from cbs reporting 
 cs_raw as ( 
   SELECT
-    PARSE_DATE('%Y%m%d', REPLACE(CAST (Transaction_Date_Local AS string), "-", "")) AS date,
-     EXTRACT (WEEK(SUNDAY) from PARSE_DATE('%Y%m%d', REPLACE (CAST (Transaction_Date_Local AS string), "-", ""))) AS week_number,
+    PARSE_DATE('%Y%m%d', REPLACE(CAST (Transaction_Date_Local AS string), '-', '')) AS date,
+     EXTRACT (WEEK(SUNDAY) from PARSE_DATE('%Y%m%d', REPLACE (CAST (Transaction_Date_Local AS string), '-', ''))) AS week_number,
     
    CASE
       WHEN  device_cs='mobile' THEN 'mobile'
@@ -99,7 +99,7 @@ cs_raw as (
     country, 
     sum(transactions) as transactions
     from cs_raw
-    where device_cs in ("desktop","mobile")
+    where device_cs in ('desktop','mobile')
    group by 1,2,3 
    ), 
 

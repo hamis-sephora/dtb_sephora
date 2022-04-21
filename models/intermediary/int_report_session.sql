@@ -9,11 +9,21 @@ SELECT
      upper(country) as country, 
      'website' as platform, 
     sum (case when extract(year from Date)  = 2021 then sessions else 0 end ) as sessions_2021,  
-    sum (case when extract(year from Date)  = 2022 then sessions else 0 end ) as sessions_2022,  
+    sum (case when extract(year from Date)  = 2022 then sessions else 0 end ) as sessions_2022, 
+    sum (case when extract(year from Date)  = 2021 then addtocart else 0 end ) as addtocart_2021,  
+    sum (case when extract(year from Date)  = 2022 then addtocart else 0 end ) as addtocart_2022,  
+    sum (case when extract(year from Date)  = 2021 then skincare else 0 end ) as skincare_2021,  
+    sum (case when extract(year from Date)  = 2022 then skincare else 0 end ) as skincare_2022, 
+    sum (case when extract(year from Date)  = 2021 then fragrance else 0 end ) as fragrance_2021,  
+    sum (case when extract(year from Date)  = 2022 then fragrance else 0 end ) as fragrance_2022,     
+    sum (case when extract(year from Date)  = 2021 then makeup else 0 end ) as makeup_2021,  
+    sum (case when extract(year from Date)  = 2022 then makeup else 0 end ) as makeup_2022,     
+    sum (case when extract(year from Date)  = 2021 then hair else 0 end ) as hair_2021,  
+    sum (case when extract(year from Date)  = 2022 then hair else 0 end ) as hair_2022,                               
     sum (case when extract(year from Date)  = 2021 then conversions else 0 end ) as conversions_2021,  
     sum (case when extract(year from Date)  = 2022 then conversions else 0 end ) as conversions_2022,   
-    round(sum (case when extract(year from Date)  = 2021 then revenue else 0 end ),2) as revenue_2021,  
-    round(sum (case when extract(year from Date)  = 2022 then revenue else 0 end ),2) as revenue_2022                 
+    round(sum (case when extract(year from Date)  = 2021 then revenue_local else 0 end ),2) as revenue_2021,  
+    round(sum (case when extract(year from Date)  = 2022 then revenue_local else 0 end ),2) as revenue_2022                 
 FROM  {{ref('stg_ga_global')}} 
 group by 1, 2 ,3
 
@@ -48,7 +58,17 @@ select
       table_1.country as country, 
       'website' as platform , 
       table_1.sessions_2021,
-      table_1.sessions_2022 ,       
+      table_1.sessions_2022 ,  
+      table_1.addtocart_2021,
+      table_1.addtocart_2022,
+      table_1.skincare_2021, 
+      table_1.skincare_2022,
+      table_1.fragrance_2021,
+      table_1.fragrance_2022, 
+      table_1.makeup_2021, 
+      table_1.makeup_2022, 
+      table_1.hair_2021,
+      table_1.hair_2022,      
       table_1.conversions_2021 ,       
       table_1.conversions_2022 ,       
       table_1.revenue_2021 ,       
@@ -69,26 +89,46 @@ SELECT
     upper(country) as country, 
     'App' as platform, 
     sum (case when extract(year from Date)  = 2021 then sessions else 0 end ) as sessions_2021,  
-    sum (case when extract(year from Date)  = 2022 then sessions else 0 end ) as sessions_2022, 
+    sum (case when extract(year from Date)  = 2022 then sessions else 0 end ) as sessions_2022,
+    0 as addtocart_2021, 
+    0 as addtocart_2022, 
+    0 as skincare_2021, 
+    0 as skincare_2022, 
+    0 as fragrance_2021,
+    0 as fragrance_2022, 
+    0 as makeup_2021, 
+    0 as makeup_2022, 
+    0 as hair_2021, 
+    0 as hair_2022,  
     sum (case when extract(year from Date)  = 2021 then conversions else 0 end ) as conversions_2021,  
     sum (case when extract(year from Date)  = 2022 then conversions else 0 end ) as conversions_2022,   
     round(sum (case when extract(year from Date)  = 2021 then revenue else 0 end ),2) as revenue_2021,  
     round(sum (case when extract(year from Date)  = 2022 then revenue else 0 end ),2) as revenue_2022,           
     0 as sessions_rattrapee_2022 , 
-    0 as sessions_forecast
+    0 as sessions_forecast,
   FROM  {{ref('stg_app_global')}} 
   group by 1, 2, 3
 
 
 UNION ALL 
 
--- Consolidation du trafic App
+-- Consolidation du trafic non App pour la Russie
 SELECT
     extract (week (sunday) from date) as week_number, 
     upper(country) as country, 
     'App' as platform, 
     sum (case when extract(year from Date)  = 2021 then sessions else 0 end ) as sessions_2021,  
     sum (case when extract(year from Date)  = 2022 then sessions else 0 end ) as sessions_2022, 
+    0 as addtocart_2021, 
+    0 as addtocart_2022, 
+    0 as skincare_2021, 
+    0 as skincare_2022, 
+    0 as fragrance_2021,
+    0 as fragrance_2022, 
+    0 as makeup_2021, 
+    0 as makeup_2022, 
+    0 as hair_2021, 
+    0 as hair_2022,      
     sum (case when extract(year from Date)  = 2021 then conversions else 0 end ) as conversions_2021,  
     sum (case when extract(year from Date)  = 2022 then conversions else 0 end ) as conversions_2022,   
     round(sum (case when extract(year from Date)  = 2021 then revenue else 0 end ),2) as revenue_2021,  

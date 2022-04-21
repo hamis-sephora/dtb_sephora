@@ -9,12 +9,19 @@ SELECT
      upper(country) as country, 
      'website' as platform, 
      'ga_global' as source, 
-      sum (sessions) as sessions , 
-      sum (conversions) as conversions, 
-      sum (revenue_local) as revenue_local ,
-      sum (revenue) as revenue_euros
+      sum(sessions) as sessions , 
+      sum(addtocart) as addtocart, 
+      sum(searches) as searches, 
+      sum(list_scroll) as list_scroll, 
+      sum(skincare) as skincare, 
+      sum(fragrance) as fragrance, 
+      sum(makeup) as makeup, 
+      sum(hair) as hair, 
+      sum(conversions) as conversions, 
+      sum(revenue_local) as revenue_local ,
+      sum(revenue) as revenue_euros
 FROM  {{ref('stg_ga_global')}} 
-group by 1, 2 ,3 , 4
+group by 1, 2 ,3 , 4 
 
 UNION ALL 
 -- Consolidation du trafic NON APP RU uniquement
@@ -24,12 +31,19 @@ SELECT
     upper(country) as country, 
     'firebase_ru' as source,
     'website' as platform, 
-    sum (sessions) as sessions , 
+    sum (sessions) as sessions ,
+    0 as addtocart, 
+    0 as searches, 
+    0 as list_scroll, 
+    0 as skincare, 
+    0 as fragrance, 
+    0 as makeup, 
+    0 as hair,  
     sum (conversions) as conversions, 
     sum (revenue_local) as revenue_local ,
     sum (revenue) as revenue_euros ,         
   FROM {{ref('stg_not_app_global')}} 
-  group by 1, 2, 3 , 4
+  group by 1, 2, 3 , 4 
   order by 1 asc 
 
 ) , 
@@ -67,6 +81,13 @@ select
       table_1.source, 
       'website' as platform , 
       table_1.sessions,
+      table_1.addtocart, 
+      table_1.searches, 
+      table_1.list_scroll, 
+      table_1.skincare, 
+      table_1.fragrance, 
+      table_1.makeup, 
+      table_1.hair, 
       table_1.conversions,
       table_1.revenue_local,
       table_1.revenue_euros, 
@@ -88,10 +109,17 @@ SELECT
     'cybersource_app' as source, 
     'App' as platform, 
     sum (sessions) as sessions , 
+    0 as addtocart, 
+    0 as searches, 
+    0 as list_scroll, 
+    0 as skincare, 
+    0 as fragrance, 
+    0 as makeup, 
+    0 as hair,      
     sum (conversions) as conversions, 
     sum (revenue_local) as revenue_local ,
     sum (revenue) as revenue_euros ,         
-    0 as sessions_rattrapee_2022 , 
+    0 as sessions_rattrapee , 
     0 as sessions_forecast,
     0 as budget
   FROM  {{ref('stg_app_global')}} 

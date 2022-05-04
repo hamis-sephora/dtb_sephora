@@ -1,4 +1,8 @@
-{{ config(materialized='table') }}
+{{
+  config(
+    materialized = 'table',
+labels = {'type': 'google_analytics', 'contains_pie': 'no', 'category':'int'}  )
+}}
 
 
 -- Consolidation des données site web uniquement 
@@ -24,7 +28,7 @@ SELECT
     sum (case when extract(year from Date)  = 2022 then conversions else 0 end ) as conversions_2022,   
     round(sum (case when extract(year from Date)  = 2021 then revenue_local else 0 end ),2) as revenue_2021,  
     round(sum (case when extract(year from Date)  = 2022 then revenue_local else 0 end ),2) as revenue_2022                 
-FROM  {{ref('stg_ga_global')}} 
+FROM  {{ref('stg_ga_consolidation')}} 
 group by 1, 2 ,3
 
 ) , 
@@ -38,7 +42,7 @@ SELECT week_number ,
        'website' as platform, 
        sum (case when year  = '2022' then sessions else 0 end ) as sessions_2022, 
        sum (case when year  = '2022' then sessions_rattrapee else 0 end ) as sessions_rattrapee_2022
- FROM {{ref('stg_sessions_retrieved')}} 
+ FROM {{ref('stg_retrieved_sessions')}} 
  group by 1,2,3
 ), 
 
@@ -135,7 +139,8 @@ SELECT
     round(sum (case when extract(year from Date)  = 2022 then revenue else 0 end ),2) as revenue_2022,           
     0 as sessions_rattrapee_2022 , 
     0 as sessions_forecast
-  FROM  {{ref('stg_not_app_global')}} 
+  FROM  {{ref('stg_desktop_global')}} 
+    where country ='ru'
   group by 1, 2, 3
 
 

@@ -1,4 +1,8 @@
-{{ config(materialized='table') }}
+{{
+  config(
+    materialized = 'table',
+labels = {'type': 'crm_database', 'contains_pie': 'no', 'category':'analysis'}  )
+}}
 
 WITH t_first_purchase AS (
   SELECT 

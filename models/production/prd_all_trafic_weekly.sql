@@ -1,4 +1,9 @@
-{{ config(materialized='table') }}
+{{
+  config(
+    materialized = 'table',
+    labels = {'type': 'google_analytics', 'contains_pie': 'no', 'category':'reporting'}  
+  )
+}}
 
 with data_info as ( 
 select 
@@ -11,7 +16,7 @@ select
     sum(sessions_retrieved) as sessions_retrieved , 
     sum(transactions) as transactions , 
     sum(revenue) as revenue, 
-    sum(session_addtocart) as session_addtocart
+    sum(addtocart) as session_addtocart
 from {{ref('prd_all_trafic')}} 
 group by 1,2,3,4,5
 )

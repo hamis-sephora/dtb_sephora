@@ -1,0 +1,42 @@
+
+
+version: 2
+
+models:
+  - name: stg_pre_attribution
+    description: Calcul du trafic global Web RU et Ile de beauté. 
+    config:
+      tags: 'pii'
+      owner: 'Hamis Badarou - EME Team'
+    meta:
+      owner: "Hamis Badarou"
+      model_maturity: production
+
+  - name: stg_ga_consolidation
+    description: Calcul global de toutes les sessions à partir de la Roll Up property GA.  
+    config:
+      tags: 'pii'
+      owner: 'Hamis Badarou - EME Team'
+    meta:
+      owner: "Hamis Badarou"
+      model_maturity: production
+
+  - name: stg_ga_perf_univers
+    description: Calcul du trafic global App à partir des données cybersource. 
+    config:
+      tags: 'pii'
+      owner: 'Hamis Badarou - EME Team'
+    meta:
+      owner: "Hamis Badarou"
+      model_maturity: production
+
+  - name: stg_ga_product_perf
+    description: Calcul du trafic global Web RU et Ile de beauté. 
+    config:
+      tags: 'pii'
+      owner: 'Hamis Badarou - EME Team'
+    meta:
+      owner: "Hamis Badarou"
+      model_maturity: production
+
+

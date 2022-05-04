@@ -2,46 +2,95 @@ version: 2
 
 sources:
   - name: ga_data
+    loader: BigQuery
     schema: '136443498'
     database: s4a-ga-raw-data-prd
     tables:
       - name: ga_sessions_*
+        tags: ['Google Analytics']
+        meta:
+          contains_pii: false
+          owner : "Web Data Team -> Youri"
 
   - name: cy_data
+    loader: BigQuery
     schema:  cybersource
     database: s4a-digital-dwh-prd
     tables:
       - name: cbs_ga_fb_aggregated
+        tags: ['Cybersource']
+        meta:
+          contains_pii: false
+          owner : "Web Data Team -> Youri"      
       - name: cbs_reports_PART
+        tags: ['Google Analytics']
+        meta:
+          contains_pii: false
+          owner : "Web Data Team -> Youri"      
 
   - name: forecast
+    loader: BigQuery
     schema:  cybersource
     database: s4a-digital-dwh-prd
     tables:
       - name: forecast_data
+        tags: ['Cybersource']
+        meta:
+          contains_pii: false
+          owner : "Web Data Team -> Youri"      
 
-  - name: cost_data
-    schema:  eme_media_data
-    database: s4a-digital-dwh-prd
+  - name: piano
+    loader: BigQuery
+    schema: piano
+    database: s4a-ga-raw-data-prd
     tables:
-      - name: adwords_data  
-      - name: facebook_data  
-      - name: snpachat_data  
-      - name: exchange_data  
-      - name: orga_adwords  
-      - name: orga_fcbk  
-      - name: orga_snap  
-      - name: orga_snapchat_campaign  
-      - name: budget_data_eme  
-
-
-
+      - name: raw_export_partitioned  
+        tags: ['Piano Analytics']
+        meta:
+          contains_pii: false
+          owner : "Web Data Team -> Youri"
 
   - name: de
+    loader: BigQuery
     schema:  eme_media_data
     database: s4a-digital-dwh-prd
     tables:
       - name: de_database
+        tags: ['CRM Database']
+        meta:
+          contains_pii: true
+          owner : "Web Data Team -> Isabelle"
+
+  - name: funnel
+    loader: BigQuery
+    schema: funnel_data
+    database: s4a-digital-dwh-prd
+    tables:
+      - name: funnel_data_*
+        tags: ['Funnel Media Data']
+        meta:
+          contains_pii: false
+          owner : "Web Data Team -> Youri"
+      - name: funnel_account_orga    
+        tags: ['Funnel Media Data']
+        meta:
+          contains_pii: false
+          owner : "Web Data Team -> Youri"
+
+  - name: cac_mvp
+    loader: BigQuery
+    schema: cac_reporting
+    database: s4a-digital-dwh-prd
+    tables:
+      - name: MVP_BY_Months_Channel_Support_BQ
+        owner: Eme Data
+        tags: ['CAC MVP']
+        meta:
+          contains_pii: false
+          owner : "Web Data Team -> Isabelle"
+
+
+
 
 
 

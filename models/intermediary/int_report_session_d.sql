@@ -1,10 +1,27 @@
-{{ config(materialized='table') }}
+{{
+  config(
+    materialized = 'table',
+   labels = {'type': 'google_analytics', 'contains_pie': 'no', 'category':'int'}  )
+}}
 
-
--- Consolidation des données site web uniquement 
-with table_1 as (
-
-SELECT 
+with table_0 as (
+select 
+      concat(date,'_',country,'_', datasource_cs) as ligne_id, 
+      date, 
+      country, 
+      datasource_cs as platform,
+      'cybersource' as source, 
+     sum(sessions) as sessions, 
+     sum(transactions) as transactions,
+     sum(revenue_local) as revenue_local, 
+     sum(revenue_euro) as revenue_euro
+from  {{ref('stg_global_cybersource')}} 
+group by 1,2,3,4,5
+order by date desc 
+),
+table_1 as (
+select 
+     concat(Date,'_',upper(country),'_','website') as ligne_id, 
      Date, 
      upper(country) as country, 
      'website' as platform, 
@@ -20,111 +37,68 @@ SELECT
       sum(conversions) as conversions, 
       sum(revenue_local) as revenue_local ,
       sum(revenue) as revenue_euros
-FROM  {{ref('stg_ga_global')}} 
-group by 1, 2 ,3 , 4 
-
-UNION ALL 
--- Consolidation du trafic NON APP RU uniquement
-
-SELECT
-    Date, 
-    upper(country) as country, 
-    'firebase_ru' as source,
-    'website' as platform, 
-    sum (sessions) as sessions ,
-    0 as addtocart, 
-    0 as searches, 
-    0 as list_scroll, 
-    0 as skincare, 
-    0 as fragrance, 
-    0 as makeup, 
-    0 as hair,  
-    sum (conversions) as conversions, 
-    sum (revenue_local) as revenue_local ,
-    sum (revenue) as revenue_euros ,         
-  FROM {{ref('stg_not_app_global')}} 
-  group by 1, 2, 3 , 4 
-  order by 1 asc 
-
-) , 
-
--- Consolidation des données de sessions redressées
-
+from {{ref('stg_ga_consolidation')}} 
+group by 1, 2 ,3 , 4 ,5
+),
 table_2 as ( 
-
-SELECT Date , 
+select 
+       concat (Date,'_',country,'_','website') as ligne_id,
+       Date , 
        country, 
        'website' as platform, 
        sum(sessions) as sessions, 
        sum(sessions_rattrapee) as sessions_rattrapee
  FROM {{ref('stg_sessions_retrieved_d')}} 
- group by 1,2,3
+ group by 1,2,3,4
 ), 
 
- -- Consolidation données forecast
-
  table_3 as (
-SELECT
+select 
+    concat(Date,'_',country,'_','website') as ligne_id,
     Date, 
     country,
     sum(sessions_forecast) as sessions_forecast,
     sum(budget) as budget
 FROM
    {{ref('stg_forecast_d')}}  
-   group by 1,2
+   group by 1,2,3
 )
 
--- Consolidation des données site web et sessions redressées
-select 
-      table_1.Date as Date,
-      table_1.country as country, 
-      table_1.source, 
-      'website' as platform , 
-      table_1.sessions,
-      table_1.addtocart, 
-      table_1.searches, 
-      table_1.list_scroll, 
-      table_1.skincare, 
-      table_1.fragrance, 
-      table_1.makeup, 
-      table_1.hair, 
-      table_1.conversions,
-      table_1.revenue_local,
-      table_1.revenue_euros, 
+select
+/* Données cybersource */
+      table_0.ligne_id,
+      table_0.date, 
+      table_0.country, 
+      table_0.platform, 
+      table_0.sessions,
+      table_0.transactions,
+      table_0.revenue_euro,
+      table_0.revenue_local, 
+/* Données google analytics */ 
+      table_1.sessions as sessions_ga,
+      table_1.addtocart as addtocart_ga, 
+      table_1.searches as searches_ga, 
+      table_1.list_scroll as list_scroll_ga, 
+      table_1.skincare as skincare_ga, 
+      table_1.fragrance as fragrance_ga, 
+      table_1.makeup as makeup_ga, 
+      table_1.hair as hair_ga , 
+      table_1.conversions as conversions_ga,
+      table_1.revenue_local as revenue_local_ga,
+      table_1.revenue_euros as revenue_euros_ga,
+/* Données sessions redressées */      
       table_2.sessions_rattrapee,
+/* Données sessions forecast et budget */      
       table_3.sessions_forecast,
       table_3.budget
-      from table_1
+      from table_0
+      left join table_1
+      on table_0.ligne_id = table_1.ligne_id
       left join table_2
-      on concat(table_1.Date,'_',table_1.country) = concat(table_2.Date,'_',table_2.country)
+      on table_0.ligne_id = table_2.ligne_id
       left join table_3
-      on concat(table_1.Date,'_',table_1.country) = concat(table_3.Date,'_',table_3.country)
-
-UNION ALL 
-
--- Consolidation du trafic App
-SELECT
-    Date, 
-    upper(country) as country, 
-    'cybersource_app' as source, 
-    'App' as platform, 
-    sum (sessions) as sessions , 
-    0 as addtocart, 
-    0 as searches, 
-    0 as list_scroll, 
-    0 as skincare, 
-    0 as fragrance, 
-    0 as makeup, 
-    0 as hair,      
-    sum (conversions) as conversions, 
-    sum (revenue_local) as revenue_local ,
-    sum (revenue) as revenue_euros ,         
-    0 as sessions_rattrapee , 
-    0 as sessions_forecast,
-    0 as budget
-  FROM  {{ref('stg_app_global')}} 
-  group by 1, 2, 3 , 4 
-
+      on table_0.ligne_id = table_3.ligne_id
+order by table_0.date desc 
 
 
 

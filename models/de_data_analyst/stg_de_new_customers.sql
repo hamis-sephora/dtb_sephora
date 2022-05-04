@@ -1,4 +1,9 @@
-{{ config(materialized='table') }}
+{{
+  config(
+    materialized = 'table',
+    labels = {'type': 'crm_database', 'contains_pie': 'no', 'category':'analysis'}  )
+}}
+
 with data as (
 SELECT  
   cardCode,

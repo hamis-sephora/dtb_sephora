@@ -1,4 +1,9 @@
-{{ config(materialized='table') }}
+{{
+  config(
+    materialized = 'table',
+    labels = {'type': 'google_analytics', 'contains_pie': 'no', 'category':'reporting'}  
+   )
+}}
 
 
 SELECT

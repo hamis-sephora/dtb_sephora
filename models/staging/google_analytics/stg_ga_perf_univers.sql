@@ -11,7 +11,7 @@
 with
     date_range as (
         select
-    format_date('%Y%m%d',date_sub(current_date(), interval 893 day)) as start_date,
+    format_date('%Y%m%d',date_sub(current_date(), interval 10 day)) as start_date,
     format_date('%Y%m%d',date_sub(current_date(), interval 1 day)) as end_date 
     ),
     data as (

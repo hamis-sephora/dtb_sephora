@@ -1,8 +1,8 @@
 
 {{
     config(
-        materialized="table",
-        labels={"type": "cybersource", "contains_pie": "no", "category": "staging"},
+        materialized='table',
+        labels={'type': 'cybersource', 'contains_pie': 'no', 'category': 'staging'},
     )
 }}
 
@@ -17,6 +17,7 @@ with
                 then 'ru'
                 when country in ('bh', 'qa', 'ae', 'sa', 'kw', 'om')
                 then 'me'
+                 when country in ('DK','SE') then 'SCANDI' 
                 else country
             end as country_bis,
             datasource_cs,
@@ -63,7 +64,7 @@ with
                 then revenue_local / 4.895
                 else revenue_local
             end as revenue_euro
-        from {{ source("cy_data", "cbs_ga_fb_aggregated") }}
+        from {{ source('cy_data', 'cbs_ga_fb_aggregated') }}
         where revenue_local is not null and country not in ('DE Zalando', 'ERROR')
     )
 select

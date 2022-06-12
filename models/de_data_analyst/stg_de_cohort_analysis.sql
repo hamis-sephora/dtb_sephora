@@ -15,7 +15,7 @@ WITH t_first_purchase AS (
     DATE(TIMESTAMP(ticket_date)) AS date,
     cardCode,
     FIRST_VALUE(DATE(TIMESTAMP(ticket_date))) OVER (PARTITION BY cardCode ORDER BY DATE(TIMESTAMP(ticket_date))) AS first_purchase_date
-    FROM  {{ source('de', 'de_database') }} 
+    FROM  {{ source('de', 'de_data_crm') }} 
     )
   ),
 

@@ -10,6 +10,11 @@ SELECT
   channel_grouping,
   COUNT(DISTINCT VISIT_ID) AS sessions,
   SUM(TRANSACTION) AS TRANSACTION,
+  SUM(ADDTOCART) as ADDTOCART,
+  sum(skincare) as skincare,
+  sum(fragrance) as fragrance,
+  sum(makeup) as makeup,
+  sum(hair) as hair,
   SUM(revenue) AS revenue
 FROM (
   SELECT
@@ -62,13 +67,14 @@ FROM (
   END
     AS channel_grouping,
     VISIT_ID AS VISIT_ID,
-    SUM(
-    IF
-      (EVENT_NAME='transaction.confirmation',
-        1,
-        0)) AS TRANSACTION,
-    IFNULL(MAX(visit_sales),
-      0) AS revenue
+    SUM(IF(EVENT_NAME='transaction.confirmation',1,0)) AS TRANSACTION,
+    --SUM(IF(EVENT_NAME='product.add_to_cart',1,0)) AS ADDTOCART,   
+    count (distinct case when EVENT_NAME='product.add_to_cart' then VISIT_ID	end) as ADDTOCART,        
+    count (distinct case when page_chapter1='skincare' then VISIT_ID	end) as skincare,        
+    count (distinct case when page_chapter1='fragrance' then VISIT_ID	end) as fragrance,        
+    count (distinct case when page_chapter1='makeup' then VISIT_ID	end) as makeup,        
+    count (distinct case when page_chapter1='hair' then VISIT_ID	end) as hair,        
+    IFNULL(MAX(visit_sales),0) AS revenue
     ---FROM `s4a-ga-raw-data-prd.piano.raw_export_partitioned`
   FROM
     `s4a-ga-raw-data-prd.piano.events_daily_export`
@@ -77,3 +83,9 @@ FROM (
   GROUP BY
     1,2,3)
 GROUP BY 1, 2
+
+
+
+
+
+

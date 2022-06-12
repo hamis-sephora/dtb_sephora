@@ -6,32 +6,25 @@
 }}
 
 
-SELECT
-  week,
-  country,
-  platform,
-  sessions_2021 as trafic_2021,
-  sessions_2022 as trafic_2022,
-  addtocart_2021, 
-  addtocart_2022,
-  skincare_2021,
-  skincare_2022,
-  fragrance_2021, 
-  fragrance_2022, 
-  makeup_2021, 
-  makeup_2022, 
-  hair_2021, 
-  hair_2022, 
-  sessions_rattrapee_2022, 
-  sessions_forecast as trafic_forecast, 
-  case when sessions_rattrapee_2022 = 0 
-  or sessions_rattrapee_2022 is null then sessions_2022 
-  else sessions_rattrapee_2022 end as trafic_retrieved_2022,
-  conversions_2021, 
-  conversions_2022,
-  revenue_2021, 
-  revenue_2022
+select
+    week, 
+    country,  
+    sum (case when extract(year from date) = 2021 then sessions else 0 end ) as sessions_2021,  
+    sum (case when extract(year from date) = 2022 then sessions else 0 end ) as sessions_2022,
+    sum (case when extract(year from date) = 2021 then sessions_retrieved else 0 end ) as sessions_retrieved_2021,  
+    sum (case when extract(year from date) = 2022 then sessions_retrieved else 0 end ) as sessions_retrieved_2022,
+    sum (case when extract(year from date) = 2021 then addtocart else 0 end ) as addtocart_2021,  
+    sum (case when extract(year from date) = 2022 then addtocart else 0 end ) as addtocart_2022,    
+    sum (case when extract(year from Date) = 2021 then sessions_forecast else 0 end ) as sessions_forecast_2021,  
+    sum (case when extract(year from Date) = 2022 then sessions_forecast else 0 end ) as sessions_forecast_2022,   
+    round(sum (case when extract(year from Date) = 2021 then sessions_cbs else 0 end ),2) as sessions_cbs_2021,  
+    round(sum (case when extract(year from Date) = 2022 then sessions_cbs else 0 end ),2) as sessions_cbs_2022,      
+    sum (case when extract(year from Date) = 2021 then transactions_cbs else 0 end ) as transactions_cbs_2021,  
+    sum (case when extract(year from Date) = 2022 then transactions_cbs else 0 end ) as transactions_cbs_2022,          
+    sum (case when extract(year from Date) = 2021 then turnover_forecast else 0 end ) as turnover_forecast_2021,  
+    sum (case when extract(year from Date) = 2022 then turnover_forecast else 0 end ) as turnover_forecast_2022,   
 FROM   
-  {{ref('int_report_session')}} 
-  where week > 0
+  {{ref('prd_session_d')}} 
+  where week > 0 
+group by 1,2  
 ORDER by week asc , country asc 

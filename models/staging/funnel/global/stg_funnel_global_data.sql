@@ -142,3 +142,8 @@ left join {{ source('funnel', 'funnel_account_orga') }} b
 on a.Data_Source_name = b.NAME
  where _table_suffix between start_date and end_date
 
+
+
+
+
+

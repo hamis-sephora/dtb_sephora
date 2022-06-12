@@ -1,12 +1,12 @@
 {{
   config(
-    materialized = 'table',
+    materialized = 'incremental',
     labels = {'type': 'google_analytics', 'contains_pie': 'no', 'category':'staging'} 
   )
 }}
 with date_range as (
 select
-    '20210501' as start_date,
+    format_date('%Y%m%d',date_sub(current_date(), interval 893 day)) as start_date,
     format_date('%Y%m%d',date_sub(current_date(), interval 1 day)) as end_date 
     ) ,
 
@@ -55,6 +55,7 @@ SELECT
           WHEN REGEXP_CONTAINS(h.page.hostname, r'^(www)\.sephora\.(om)$') THEN 'me'
           WHEN REGEXP_CONTAINS(h.page.hostname, r'^(www)\.sephora\.(bh)$') THEN 'me'
           WHEN REGEXP_CONTAINS(h.page.hostname, r'^(www)\.sephora\.(com.kw)$') THEN 'me'
+          WHEN REGEXP_CONTAINS(h.page.hostname, r'^(www)\.sephora\.(com.tr)$') THEN 'tr'             
           WHEN REGEXP_CONTAINS(h.page.hostname, r'^(www)\.sephora\.(qa)$') THEN 'me'
           WHEN REGEXP_CONTAINS(h.page.hostname, r'^(www)\.sephora\.(ro)$') THEN 'ro'
           WHEN REGEXP_CONTAINS(h.page.hostname, r'^(www)\.sephora\.(gr)$') THEN 'gr'
@@ -125,8 +126,9 @@ cs_raw as (
    and cast(ga.year as string) = cs_final.year
    -- where ga.country in ('ro') --- a filtrer par pays si besoin 
    where ga.transactions >0
-   )
+   ), 
 
+   consolidation as (
    select  
    year,
    week_number,
@@ -139,7 +141,12 @@ cs_raw as (
    end AS  sessions_rattrapee
    FROM final
    order by year desc , week_number desc 
+   )
 
+   select * from consolidation
+{% if is_incremental() %}
+where date > (select max(date) from {{ this }})
+{% endif %}
 
 
    

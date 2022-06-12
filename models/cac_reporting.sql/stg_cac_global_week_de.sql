@@ -8,11 +8,10 @@ with
     data_crm as (
            select
     country,
-    case when length(month) = 1 then concat('0', month) else month end as month,
     concat(
-        year,case when length(month) = 1 then concat('0', month) else month end,'01'
-    ) as date,
+        year,'-',case when length(week) = 1 then concat('0', week) else week end ) as week,
     year,
+    week as week_n, 
     channel,
     case
         when
@@ -33,17 +32,19 @@ with
     revenue,
     new_to_sephora_revenue,
     numberoftransaction
-from {{ source('cac_mvp', 'MVP_BY_Months_Channel_Support_BQ') }}
+from {{ source('cac_mvp', 'MVP_BY_Week_Channel_Support_BQ') }}
 where country = 'DE'
     ),
 
   data_crm_cons as (
     select 
       country , 
-      parse_date('%Y%m%d', cast(date as string)) as month, 
+      year,
+      week, 
+      week_n, 
       channel_grouping,
       channel,
-      concat(country,'_',parse_date('%Y%m%d', cast(date as string)),'_',channel) as ligne_id,
+      concat(country,'_',week,'_',channel) as ligne_id,
      sum(nb_new_estore_clients) as nb_new_estore_clients,
      sum(nb_new_sephora_clients) as nb_new_sephora_clients, 
      sum(nb_clients) as nb_clients, 
@@ -52,13 +53,16 @@ where country = 'DE'
      sum(new_to_sephora_revenue) as new_to_sephora_revenue,
      sum(numberoftransaction) as numberoftransaction
      from data_crm 
-     group by 1,2,3,4,5
-     order by month desc
+     group by 1,2,3,4,5,6,7
   ),
 
-    media_data as (
+media_data as (
+
         select
-            concat(substr(cast(date as string),0,7),'-01') as month,
+            date,
+            extract(year from date) as year , 
+            extract( week(sunday) from date ) as week , 
+            case when length(cast(extract( week(sunday) from date ) as string)) = 1 then concat('0', extract( week(sunday) from date)) else cast(extract( week(sunday) from date ) as string) end as week_y , 
             country,
             concat(country,'_',concat(substr(cast(date as string),0,7),'-01'),'_',channel_grouping) as ligne_id,
             channel_grouping as channel,
@@ -67,15 +71,30 @@ where country = 'DE'
             sum(clicks) as clicks
         from {{ ref('stg_funnel_eme_reporting') }}
         where country = 'DE'
-        group by 1,2,3,4
-        order by month desc 
+        group by 1,2,3,4,5,6,7) , 
+
+media_cons as (
+        select 
+              country , 
+              year, 
+              week_y as week, 
+              concat( country ,'_',concat(year,'-',week_y),'_', channel) as ligne_id, 
+             channel,
+             sum(cost) as cost,
+             sum(impressions) as impressions,
+             sum(clicks) as clicks
+             from media_data
+             group by 1,2,3,4,5
+
     )
 select
     data_crm_cons.country,
-    data_crm_cons.month,
+    data_crm_cons.year,
+    data_crm_cons.week,    
+    data_crm_cons.week_n,        
     data_crm_cons.channel as channel , 
     data_crm_cons.channel_grouping,
-    media_data.channel as media_channel_grouping,     
+    media_cons.channel as media_channel_grouping,     
     nb_new_estore_clients,
     nb_new_sephora_clients,
     new_to_sephora_revenue,
@@ -85,10 +104,13 @@ select
     nb_of_visits,
     revenue,
     numberoftransaction,
-    media_data.clicks,
-    media_data.impressions,
-    media_data.cost
+    media_cons.ligne_id as media_ligne_id, 
+    media_cons.clicks,
+    media_cons.impressions,
+    media_cons.cost
 from data_crm_cons
 left join
-    media_data on data_crm_cons.ligne_id = media_data.ligne_id
-order by data_crm_cons.month desc     
+    media_cons on data_crm_cons.ligne_id = media_cons.ligne_id
+
+
+

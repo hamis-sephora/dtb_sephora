@@ -55,10 +55,10 @@ sources:
     schema:  eme_media_data
     database: s4a-digital-dwh-prd
     tables:
-      - name: de_database
+      - name: de_data_crm
         tags: ['CRM Database']
         meta:
-          contains_pii: true
+          contains_pii: false
           owner : "Web Data Team -> Isabelle"
 
   - name: funnel
@@ -88,9 +88,22 @@ sources:
         meta:
           contains_pii: false
           owner : "Web Data Team -> Isabelle"
+      - name: MVP_BY_Week_Channel_Support_BQ
+        owner: Eme Data
+        tags: ['CAC MVP']
+        meta:
+          contains_pii: false
+          owner : "Web Data Team -> Isabelle"
 
-
-
-
+  - name: ga4
+    loader: BigQuery
+    schema:  eme_media_data
+    database: s4a-digital-dwh-prd
+    tables:
+      - name: ga4_data
+        tags: ['GA4 Dara']
+        meta:
+          contains_pii: false
+          owner : "Web Data Team -> Isabelle"
 
 

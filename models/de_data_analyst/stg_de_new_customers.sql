@@ -8,14 +8,13 @@ with data as (
 SELECT  
   cardCode,
   ticket_date,
-  accountType,
   Ticket_ID,
   Sales_Ex_VAT,
   sales_vat,
   store_code,
   store_country,
   quantity
-FROM {{ source('de', 'de_database') }} 
+FROM {{ source('de', 'de_data_crm') }} 
 ) , 
 
 type_customers as (
@@ -28,7 +27,6 @@ SELECT  *,
 select 
   cardCode,
   ticket_date,
-  accountType,
   Ticket_ID,
   Sales_Ex_VAT,
   sales_vat,

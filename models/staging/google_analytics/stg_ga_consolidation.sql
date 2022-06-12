@@ -1,13 +1,13 @@
 {{
   config(
-    materialized = 'table',
+    materialized = 'incremental',
     labels = {'type': 'google_analytics', 'contains_pie': 'no', 'category':'staging'}  
   )
 }}
 -- Trafic global sites internet tout pays ( source : vue roll up property )
 with date_range as (
 select
-    '20200101' as start_date,
+    format_date('%Y%m%d',date_sub(current_date(), interval 893 day)) as start_date,
     format_date('%Y%m%d',date_sub(current_date(), interval 1 day)) as end_date 
     ) ,
 
@@ -27,13 +27,13 @@ SELECT
           WHEN REGEXP_CONTAINS(h.page.hostname, r'^(www)\.sephora\.(om)$') THEN 'me'
           WHEN REGEXP_CONTAINS(h.page.hostname, r'^(www)\.sephora\.(bh)$') THEN 'me'
           WHEN REGEXP_CONTAINS(h.page.hostname, r'^(www)\.sephora\.(com.kw)$') THEN 'me'
+          WHEN REGEXP_CONTAINS(h.page.hostname, r'^(www)\.sephora\.(com.tr)$') THEN 'tr'          
           WHEN REGEXP_CONTAINS(h.page.hostname, r'^(www)\.sephora\.(qa)$') THEN 'me'
           WHEN REGEXP_CONTAINS(h.page.hostname, r'^(www)\.sephora\.(ro)$') THEN 'ro'
           WHEN REGEXP_CONTAINS(h.page.hostname, r'^(www)\.sephora\.(gr)$') THEN 'gr'
         ELSE 'empty'END AS country,
         channelGrouping AS channel,
         'website' as platform,
-        device.deviceCategory	 as device, 
         trafficSource.campaign	,
         trafficSource.source, 
         trafficSource.medium, 
@@ -57,18 +57,19 @@ SELECT
          date_range,
         UNNEST (hits) AS h
       WHERE
-        REGEXP_CONTAINS(h.page.hostname, r'^(www|m)\.sephora\.(fr|de|pt|es|it|pl|se|cz|dk|sa|ae|com.kw|om|bh|qa|ro|gr)$') IS TRUE 
+        REGEXP_CONTAINS(h.page.hostname, r'^(www|m)\.sephora\.(fr|de|pt|es|it|pl|se|cz|dk|sa|ae|com.kw|om|bh|qa|ro|gr|com.tr)$') IS TRUE 
         and _TABLE_SUFFIX between start_date and end_date
         AND totals.visits = 1
       GROUP BY 1, 2, 3, 4, 5,6,7
       order by Date desc 
-)
+), 
+
+consolidation as (
 select 
        Date, 
-       country, 
+       country,
        channel, 
        platform,
-       device, 
        sessions, 
        product_view,
        addtocart, 
@@ -88,6 +89,7 @@ select
         when country in ('sa', 'SA') then revenue_local/4.275
         when country in ('dk','DK') then revenue_local/7.6
         when country in ('se', 'SE') then revenue_local/11
+        when country in ('tr', 'TR') then revenue_local/16.8
         when country in ('om', 'OM') then revenue_local/0.46
         when country in ('bh', 'BH') then revenue_local/0.46
         when country in ('kw', 'KW') then revenue_local/0.36
@@ -97,7 +99,12 @@ select
        else revenue_local end as revenue
        from data 
 
+)
 
+select * from consolidation
+{% if is_incremental() %}
+where date > (select max(date) from {{ this }})
+{% endif %}
 
 
 

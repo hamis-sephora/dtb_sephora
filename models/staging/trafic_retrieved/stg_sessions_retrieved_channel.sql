@@ -1,12 +1,12 @@
 {{
   config(
-    materialized = 'table',
-    labels = {'type': 'google_analytics', 'contains_pie': 'no', 'category':'staging'}  
+    materialized = 'incremental',
+    labels = {'type': 'google_analytics', 'contains_pie': 'no', 'category':'staging'} 
   )
 }}
 with date_range as (
 select
-    '20200101' as start_date,
+    format_date('%Y%m%d',date_sub(current_date(), interval 893 day)) as start_date,
     format_date('%Y%m%d',date_sub(current_date(), interval 1 day)) as end_date 
     ) ,
 
@@ -56,6 +56,7 @@ SELECT
           WHEN REGEXP_CONTAINS(h.page.hostname, r'^(www)\.sephora\.(bh)$') THEN 'me'
           WHEN REGEXP_CONTAINS(h.page.hostname, r'^(www)\.sephora\.(com.kw)$') THEN 'me'
           WHEN REGEXP_CONTAINS(h.page.hostname, r'^(www)\.sephora\.(qa)$') THEN 'me'
+          WHEN REGEXP_CONTAINS(h.page.hostname, r'^(www)\.sephora\.(com.tr)$') THEN 'tr'          
           WHEN REGEXP_CONTAINS(h.page.hostname, r'^(www)\.sephora\.(ro)$') THEN 'ro'
           WHEN REGEXP_CONTAINS(h.page.hostname, r'^(www)\.sephora\.(gr)$') THEN 'gr'
         ELSE 'empty'END AS country,
@@ -70,7 +71,7 @@ SELECT
         UNNEST (hits) AS h,
         date_range
       WHERE
-        REGEXP_CONTAINS(h.page.hostname, r'^(www|m)\.sephora\.(fr|de|pt|es|it|pl|se|cz|dk|sa|ae|com.kw|om|bh|qa|ro|gr)$') IS TRUE 
+        REGEXP_CONTAINS(h.page.hostname, r'^(www|m)\.sephora\.(fr|de|pt|es|it|pl|se|cz|dk|sa|ae|com.kw|om|bh|qa|ro|gr|com.tr)$') IS TRUE 
         and _TABLE_SUFFIX between start_date and end_date
         and totals.visits = 1
       GROUP BY 1, 2, 3,4
@@ -133,8 +134,8 @@ cs_raw as (
    -- where ga.country in ('ro') --- a filtrer par pays si besoin 
    where ga.transactions >0
 
-   )
-
+   ), 
+ consolidation as (
    select  
    year,
    Date,
@@ -152,7 +153,12 @@ cs_raw as (
    revenue_local
    FROM final
    order by year desc , Date desc 
+ )
 
+ select * from consolidation
+{% if is_incremental() %}
+where date > (select max(date) from {{ this }})
+{% endif %}
 
 
    

@@ -21,9 +21,14 @@ group by 1 , 2
 select Date , 
        case when country in ('UAE', 'QA', 'KW' , 'BH' , 'KSA' ,'OM' ) then 'ME'
             when country in ( 'IDB' , 'RU') then 'RU'
+            when country in ('SE','DK') then 'SCANDI'
        else country end as country, 
        sessions_forecast , 
        _turnoverforecast_, 
        Orders_forecast,
        budget
        from forecast
+       where country ='FR'
+       order by date desc 
+
+       

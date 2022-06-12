@@ -8,7 +8,6 @@
 
 select
     cardcode,
-    count(distinct accounttype) as accounttype,
     count(distinct ticket_id) as transactions,
     count(distinct article_code) as distinct_article,
     round(sum(cast(sales_ex_vat as float64)), 2) as revenue,
@@ -31,5 +30,5 @@ select
         case when axe_desc = '{{Axe_Desc}}' then cast(sales_ex_vat as float64) end
     ) as {{ Axe_Desc }}_amount,
     {% endfor %}
-from {{ source('de', 'de_database') }}
+from {{ source('de', 'de_data_crm') }}
 group by 1

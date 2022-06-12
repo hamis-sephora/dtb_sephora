@@ -13,11 +13,24 @@ with
             country,
             data_source_type,
             campaign,
+            media_type,
             case
                 when
                     data_source_type in (
-                        'adwords', 'facebookads', 'snapchat'
-                    ) and campaign like '%_EC_%'
+                        'facebookads', 'snapchat'
+                    ) and campaign like '%_EC_%' and campaign not like '%ECOM%'
+                then 'PERF'
+                when data_source_type = 'facebook' and campaign like '%_CS_TRAF_%' and campaign not like '%coad%'
+                then 'PERF'
+                when
+                    data_source_type = 'adwords'
+                    and media_type = 'Display'
+                    and campaign not like '%_EC_%'
+                then 'OTHERS'
+                when
+                    data_source_type = 'adwords'
+                    or media_type = 'Display'
+                    and campaign not like '%_EC_%'
                 then 'PERF'
                 when data_source_type in ('rtbhouse', 'criteo', 'awin', 'tiktok')
                 then 'PERF'
@@ -68,5 +81,10 @@ select
 from funnel_data
 where campaign_type = 'PERF'
 group by 1, 2, 3
+
+
+
+
+
 
 

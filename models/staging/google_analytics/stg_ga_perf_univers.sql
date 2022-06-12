@@ -1,6 +1,6 @@
 {{
     config(
-        materialized='table',
+        materialized='incremental',
         labels={
             'type': 'google_analytics',
             'contains_pie': 'no',
@@ -11,8 +11,8 @@
 with
     date_range as (
         select
-            '20200101' as start_date,
-            format_date('%Y%m%d', date_sub(current_date(), interval 1 day)) as end_date
+    format_date('%Y%m%d',date_sub(current_date(), interval 893 day)) as start_date,
+    format_date('%Y%m%d',date_sub(current_date(), interval 1 day)) as end_date 
     ),
     data as (
         select
@@ -37,6 +37,7 @@ with
                 then 'me'
                 when regexp_contains(h.page.hostname, r'^(www)\.sephora\.(qa)$')
                 then 'me'
+                WHEN REGEXP_CONTAINS(h.page.hostname, r'^(www)\.sephora\.(com.tr)$') THEN 'tr'                   
                 when regexp_contains(h.page.hostname, r'^(www)\.sephora\.(ro)$')
                 then 'ro'
                 when regexp_contains(h.page.hostname, r'^(www)\.sephora\.(gr)$')
@@ -66,25 +67,26 @@ with
             ) as list_scroll,
             count(
                 distinct case
-                    when h.contentgroup.contentgroup1 = 'skincare'
+                    when h.contentgroup.contentgroup1 in('skincare','pielęgnacja twarzy','العناية بالبشرة')
                     then concat(fullvisitorid, cast(visitstarttime as string))
                 end
             ) as skincare,
             count(
                 distinct case
-                    when h.contentgroup.contentgroup1 = 'fragrance'
+                    when h.contentgroup.contentgroup1 in ('fragrance','parf','perfumy')
                     then concat(fullvisitorid, cast(visitstarttime as string))
                 end
             ) as fragrance,
             count(
                 distinct case
-                    when h.contentgroup.contentgroup1 = 'makeup'
+                    when h.contentgroup.contentgroup1 in('makeup','make up','cat_Maquillage','cat maquillage','makijaż','المكياج')
+                    
                     then concat(fullvisitorid, cast(visitstarttime as string))
                 end
             ) as makeup,
             count(
                 distinct case
-                    when h.contentgroup.contentgroup1 = 'hair'
+                    when h.contentgroup.contentgroup1 in('hair','العناية بالشعر','włosy')
                     then concat(fullvisitorid, cast(visitstarttime as string))
                 end
             ) as hair,
@@ -95,15 +97,12 @@ with
         -- round(sum( h.transaction.transactionRevenue/1000000),2) as revenue_local ,
         from {{ source('ga_data', 'ga_sessions_*') }}, unnest(hits) as h, date_range
         where
-            regexp_contains(
-                h.page.hostname,
-                r'^(www|m)\.sephora\.(fr|de|pt|es|it|pl|se|cz|dk|sa|ae|com.kw|om|bh|qa|ro|gr)$'
-            ) is true
+        REGEXP_CONTAINS(h.page.hostname, r'^(www|m)\.sephora\.(fr|de|pt|es|it|pl|se|cz|dk|sa|ae|com.kw|om|bh|qa|ro|gr|com.tr)$') IS TRUE 
             and _table_suffix between start_date and end_date
             and totals.visits = 1
         group by 1, 2, 3, 4
-    )
-
+    ), 
+consolidation as (
 select
     date,
     upper(country) as country,
@@ -117,3 +116,24 @@ select
     list_scroll,
     sessions
 from data
+union all 
+ select  
+  date , 
+  'FR' as country , 
+   channel_grouping as channel, 
+   skincare, 
+   fragrance, 
+   makeup, 
+   hair,
+   addtocart,
+   0 as searches ,
+   0 as list_scroll, 
+   sessions
+    from {{ ref('stg_piano_data') }}
+
+)
+
+select * from consolidation
+{% if is_incremental() %}
+where date > (select max(date) from {{ this }})
+{% endif %}

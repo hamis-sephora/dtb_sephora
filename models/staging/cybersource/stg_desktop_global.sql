@@ -1,13 +1,13 @@
 {{
   config(
-    materialized = 'table',
+    materialized = 'incremental',
     labels = {'type': 'cybersource', 'contains_pie': 'no', 'category':'staging'}  
   )
 }}
 
 with date_range as (
 select
-    '20200101' as start_date,
+    format_date('%Y%m%d',date_sub(current_date(), interval 893 day)) as start_date , 
     format_date('%Y%m%d',date_sub(current_date(), interval 1 day)) as end_date 
     ) ,
 data as (
@@ -27,8 +27,8 @@ where datasource_cs != 'app'
 and sessions is not null
 and date between start_date and end_date
 group by 1,2,3,4,5
-)
-
+) , 
+consolidation as (
 select 
        Date, 
        country, 
@@ -52,3 +52,8 @@ select
         when country in ('ro', 'RO') then revenue_local/4.895
        else revenue_local end as revenue
        from data 
+)
+select * from consolidation
+{% if is_incremental() %}
+where date > (select max(date) from {{ this }})
+{% endif %}

@@ -1,6 +1,6 @@
 {{
   config(
-    materialized = 'table',
+    materialized = 'incremental',
     labels = {'type': 'cybersource', 'contains_pie': 'no', 'category':'staging'}  
   )
 }}
@@ -8,7 +8,7 @@
 -- Trafic App tout pays ( source : cybersource )
 with date_range as (
 select
-    '20190101' as start_date,
+    format_date('%Y%m%d',date_sub(current_date(), interval 893 day)) as start_date , 
     format_date('%Y%m%d',date_sub(current_date(), interval 1 day)) as end_date 
     ) ,
   
@@ -29,7 +29,9 @@ where datasource_cs = 'app'
 and sessions is not null
 and date between start_date and end_date
 group by 1,2
-order by date desc )
+order by date desc ), 
+
+consolidation as (
 select 
        Date, 
        country, 
@@ -45,6 +47,7 @@ select
         when country in ('sa', 'SA') then revenue_local/4.275
         when country in ('dk','DK') then revenue_local/7.6
         when country in ('se', 'SE') then revenue_local/11
+        when country in ('tr', 'TR') then revenue_local/16.8
         when country in ('om', 'OM') then revenue_local/0.46
         when country in ('bh', 'BH') then revenue_local/0.46
         when country in ('kw', 'KW') then revenue_local/0.36
@@ -53,3 +56,8 @@ select
         when country in ('ro', 'RO') then revenue_local/4.895
        else revenue_local end as revenue
        from data 
+)
+select * from consolidation
+{% if is_incremental() %}
+where date > (select max(date) from {{ this }})
+{% endif %}

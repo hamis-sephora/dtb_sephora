@@ -15,6 +15,7 @@ WITH t_first_purchase AS (
     cast(Sales_Ex_VAT as float64) as revenue,
     FIRST_VALUE(DATE(TIMESTAMP(ticket_date))) OVER (PARTITION BY cardCode ORDER BY DATE(TIMESTAMP(ticket_date))) AS first_purchase_date
     FROM  {{ source('de', 'de_data_crm') }} 
+    where store_code = '2487'   -- E-Store Only
     )
   ),
 

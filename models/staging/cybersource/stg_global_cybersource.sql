@@ -17,7 +17,7 @@ with
                 then 'ru'
                 when country in ('bh', 'qa', 'ae', 'sa', 'kw', 'om')
                 then 'me'
-                 when country in ('DK','SE') then 'SCANDI' 
+                 when country in ('dk','se') then 'scandi' 
                 else country
             end as country_bis,
             datasource_cs,

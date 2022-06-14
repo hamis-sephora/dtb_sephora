@@ -28,7 +28,6 @@ select Date ,
        Orders_forecast,
        budget
        from forecast
-       where country ='FR'
        order by date desc 
 
        

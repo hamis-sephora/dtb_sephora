@@ -6,7 +6,7 @@
 }}
 select  
       Date , 
-      country, 
+      Country_ as country, 
       Data_Source_type as regie_source, 
             campaign,
       media_type, 

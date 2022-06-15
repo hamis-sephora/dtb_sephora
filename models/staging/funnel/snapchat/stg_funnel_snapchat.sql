@@ -10,7 +10,7 @@
 
 select
  Date, 
- country, 
+ Country_ as country, 
  Data_Source_type,
  Data_Source_name,
  Ad_account_name__Snapchat,

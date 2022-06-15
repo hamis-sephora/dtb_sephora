@@ -10,7 +10,7 @@
 
 select
     date,
-    country,
+    Country_ as country, 
     data_source_type,
     data_source_name,
     category_name__criteo,

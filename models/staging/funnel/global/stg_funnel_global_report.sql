@@ -49,7 +49,8 @@ select
   ifnull (All_Conv__Value__Transactions_Google_Ads_SephoraEUR_SR_BEL_EMEA_Search_Google_LAB_EUR_LVMH____9439832600__AdWords,0)+
   ifnull (All_Conv__Value__Transactions_Google_Ads_SephoraEUR_SR_FRA_EMEA_Search_Google_LAB_EUR_LVMH_CSS___4746983045__AdWords,0)+
   ifnull (All_Conv__Value__UA_Transactions_AE__1_1__Main_Profile___NEW_SephoraEUR_SR_UAE_EMEA_Search_Google_PML_USD_LVMH____1801457948__,0)+
-  ifnull (All_Conv__Value__UA_Transactions_SA__1_1__Main_Profile___NEW_SephoraEUR_SR_UAE_EMEA_Search_Google_PML_USD_LVMH____1801457948__,0)) as revenue
+  ifnull (All_Conv__Value__UA_Transactions_SA__1_1__Main_Profile___NEW_SephoraEUR_SR_UAE_EMEA_Search_Google_PML_USD_LVMH____1801457948__,0)+
+  ifnull (Conv__Value__Sale_SephoraEUR_SR_ROU_EMEA_Search_Google_LAB_EUR_LVMH____7778606678__AdWords,0)) as revenue
 from {{ref('stg_funnel_global_data')}} 
 where Data_Source_type = 'adwords'
 group by 1,2,3,4,5,6

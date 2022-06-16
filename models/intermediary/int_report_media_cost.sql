@@ -8,7 +8,7 @@
 }}
 select  
       Date , 
-      country, 
+      Country_ as country, 
       sum(case when Data_Source_type='adwords' then cost end) as cost_adwords, 
       sum(case when Data_Source_type='awin' then cost end) as cost_awin, 
       sum(case when Data_Source_type='criteo' then cost end) as cost_criteo, 

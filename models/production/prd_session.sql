@@ -20,7 +20,9 @@ select
     round(sum (case when extract(year from Date) = 2021 then sessions_cbs else 0 end ),2) as sessions_cbs_2021,  
     round(sum (case when extract(year from Date) = 2022 then sessions_cbs else 0 end ),2) as sessions_cbs_2022,      
     sum (case when extract(year from Date) = 2021 then transactions_cbs else 0 end ) as transactions_cbs_2021,  
-    sum (case when extract(year from Date) = 2022 then transactions_cbs else 0 end ) as transactions_cbs_2022,          
+    sum (case when extract(year from Date) = 2022 then transactions_cbs else 0 end ) as transactions_cbs_2022,     
+    sum (case when extract(year from Date) = 2021 then revenue_euro_cbs else 0 end ) as revenue_euro_cbs_2021,  
+    sum (case when extract(year from Date) = 2022 then revenue_euro_cbs else 0 end ) as revenue_euro_cbs_2022,            
     sum (case when extract(year from Date) = 2021 then turnover_forecast else 0 end ) as turnover_forecast_2021,  
     sum (case when extract(year from Date) = 2022 then turnover_forecast else 0 end ) as turnover_forecast_2022,   
 FROM   

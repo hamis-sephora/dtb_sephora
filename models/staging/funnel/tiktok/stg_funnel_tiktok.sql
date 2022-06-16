@@ -9,7 +9,7 @@
 
 select
  Date, 
- country, 
+ Country_ as country, 
  Data_Source_type,
  Data_Source_name,
  Advertiser_name__TikTok,

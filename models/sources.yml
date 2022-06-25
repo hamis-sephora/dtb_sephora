@@ -63,7 +63,7 @@ sources:
 
   - name: funnel
     loader: BigQuery
-    schema: funnel_data
+    schema: eme_media_funnel_data
     database: s4a-digital-dwh-prd
     tables:
       - name: funnel_data_*

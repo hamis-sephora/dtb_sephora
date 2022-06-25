@@ -6,6 +6,7 @@
 }}
 
 select
+    distinct 
     event_date,
     country,
     platform,

@@ -6,7 +6,8 @@
 }}
 
 with data_media as (
-select  
+select   
+     distinct 
       Date , 
       Country_ as country, 
       regie_source, 

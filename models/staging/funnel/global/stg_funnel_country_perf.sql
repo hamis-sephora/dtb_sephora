@@ -76,8 +76,7 @@ group by 1,2,3,4,5,6,7,8
 select 
       * 
 from data_media
-
-
+where country not in ('NOT NOW', 'UNKNOW', 'UK', ) or country is null
 
 
 

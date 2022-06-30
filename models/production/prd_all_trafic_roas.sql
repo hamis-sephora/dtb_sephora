@@ -62,8 +62,8 @@ with
             clicks,
             cost
         from media_data
-    )
-
+    ),
+global_data as (
 select
     ga_data.date,
     ga_data.id_channel,
@@ -96,3 +96,12 @@ select
     consolidation_media.cost as media_cost
 from ga_data
 left join consolidation_media on ga_data.id_channel = consolidation_media.id_channel
+)
+
+select * from global_data
+where country not in ('RU', 'UK')
+order by date desc 
+
+
+
+

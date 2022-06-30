@@ -24,7 +24,8 @@ select
        revenue_local, 
        revenue_euro
 from {{ref('int_all_trafic')}} 
-
+where country not like ('RU')
+order by date desc 
 
 
 

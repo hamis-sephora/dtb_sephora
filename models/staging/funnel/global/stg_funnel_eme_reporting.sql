@@ -32,10 +32,12 @@ with
                     or media_type = 'Display'
                     and campaign not like '%_EC_%'
                 then 'PERF'
+                when regie_source in ('criteo') and lower(campaign) not like '%trademarketing%' then 'PERF'                 
                 when regie_source in ('rtbhouse', 'criteo', 'awin', 'tiktok')
                 then 'PERF'
                 else 'OTHERS'
-            end as campaign_type,
+             end as campaign_type,
+        
             case
                 when regie_source in ('facebookads', 'tiktok', 'snapchat')
                 then 'Social'

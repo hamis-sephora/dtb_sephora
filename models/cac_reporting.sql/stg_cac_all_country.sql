@@ -65,6 +65,7 @@ from {{ source('cac_mvp', 'MVP_BY_Months_Channel_Support_BQ') }}
             sum(impressions) as impressions,
             sum(clicks) as clicks
         from {{ ref('stg_funnel_eme_reporting') }}
+        where country not in ('NOT NOW', 'UNKNOW', 'UK', 'RU')
         group by 1,2,3,4
         order by month desc 
     )

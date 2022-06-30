@@ -64,6 +64,8 @@ case
     then revenue_local / 4.385
     when country in ('ro', 'RO')
     then revenue_local / 4.895
+    when country in ('tr', 'TR')
+    then revenue_local / 16.8    
     else revenue_local
 end as revenue_euro
 from data_info

@@ -47,8 +47,9 @@ group by 1,2
         sum(budget) as budget
  from {{ref('stg_forecast_d')}} 
       group by 1,2,3
- )
+ ), 
 
+global_data as (
  select 
        trafic_data.date,
        trafic_data.week, 
@@ -73,4 +74,12 @@ group by 1,2
       left join cybersource_data
       on trafic_data.id = cybersource_data.id
    order by date desc    
-      
+)
+
+select * from global_data
+where country not in ('UK','RU')
+order by date desc 
+
+
+
+

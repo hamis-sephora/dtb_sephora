@@ -43,6 +43,7 @@ with
                 then 'Social'
                 when regie_source in ('rtbhouse', 'criteo')
                 then 'Retargeting'
+                when Country_ ='SCANDI' and lower(campaign) like '%_bra_%' then 'Paid Search Brand'
                 when regie_source in ('awin')
                 then 'Affiliation'
                 when

@@ -43,7 +43,7 @@ with
                 then 'Social'
                 when regie_source in ('rtbhouse', 'criteo')
                 then 'Retargeting'
-                when Country_ ='SCANDI' and lower(campaign) like '%bra_%' then 'Paid Search Brand'
+                when Country_ ='SCANDI' and lower(campaign) like '%_bra_%' then 'Paid Search Brand'
                 when regie_source in ('awin')
                 then 'Affiliation'
                 when
@@ -84,7 +84,7 @@ select
     sum(clicks) as clicks,
     sum(revenue) as revenue
 from funnel_data
-where campaign_type = 'PERF'
+where campaign_type = 'PERF' 
 group by 1, 2, 3
 
 

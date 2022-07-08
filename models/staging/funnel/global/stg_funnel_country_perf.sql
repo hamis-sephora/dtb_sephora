@@ -20,7 +20,7 @@ select
                         'facebookads', 'snapchat'
                     ) and campaign like '%_EC_%' and campaign not like '%ECOM%'
                 then 'PERF'
-                when regie_source = 'facebook' and campaign like '%_CS_TRAF_%' and campaign not like '%coad%'
+                when regie_source = 'facebook' and campaign like '%_CS_TRAF_%' or campaign like '%_EC_%' and lower(campaign) not like '%coad%'
                 then 'PERF'
                 when
                     regie_source = 'adwords'
@@ -29,10 +29,11 @@ select
                 then 'OTHERS'
                 when
                     regie_source = 'adwords'
-                    or media_type = 'Display'
+                    and media_type = 'Display'
                     and campaign not like '%_EC_%'
                 then 'PERF'
-                when regie_source in ('rtbhouse', 'criteo', 'awin', 'tiktok')
+                when regie_source in ('criteo') and lower(campaign) not like '%trademarketing%' then 'PERF'  
+                when regie_source in ('rtbhouse', 'awin', 'tiktok')
                 then 'PERF'
                 else 'OTHERS'
             end as campaign_type,
@@ -77,7 +78,7 @@ group by 1,2,3,4,5,6,7,8
 select 
       * 
 from data_media
-where country not in ('NOT NOW', 'UNKNOW', 'UK' , 'RU' ) or country is null
+where country not in ('NOT NOW', 'UNKNOW', 'UK' , 'RU' ) or country is null 
 
 
 

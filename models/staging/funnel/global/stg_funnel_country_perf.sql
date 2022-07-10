@@ -32,8 +32,8 @@ select
                     /*--and media_type = 'Display'*/
                     and lower(campaign) like '%_ec_%'
                 then 'PERF'
-                when regie_source in ('criteo') and lower(campaign) not like '%trademarketing%' then 'PERF'                 
-                when regie_source in ('rtbhouse', 'criteo', 'awin', 'tiktok')
+                when regie_source in ('criteo') and lower(campaign) not like '%trademarketing%' then 'PERF'  
+                when regie_source in ('rtbhouse', 'awin', 'tiktok')
                 then 'PERF'
                 else 'OTHERS'
              end as campaign_type,

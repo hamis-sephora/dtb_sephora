@@ -13,9 +13,7 @@ with
     ga_data as (
         select
             date,
-            cast(
-                concat(date, '_', country, '_', channel, '_', platform) as string
-            ) as id_channel,
+            cast(concat(date, '_', country, '_', channel, '_', platform) as string ) as id_channel,
             week,
             country,
             channel,
@@ -44,17 +42,7 @@ with
     consolidation_media as (
         select
             date,
-            cast(
-                concat(
-                    media_data.date,
-                    '_',
-                    media_data.country,
-                    '_',
-                    media_data.channel,
-                    '_',
-                    media_data.platform
-                ) as string
-            ) as id_channel,
+            cast(concat(media_data.date,'_',media_data.country,'_',media_data.channel,'_',media_data.platform ) as string) as id_channel,
             country,
             platform,
             channel,

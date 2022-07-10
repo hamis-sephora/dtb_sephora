@@ -10,39 +10,51 @@ select
       Data_Source_type as regie_source, 
             campaign,
       media_type, 
-            case    
+case
                 when
-                    data_source_type in ('facebookads', 'snapchat'
-                    ) and campaign like '%_EC_%'
-                      and campaign not like '%ECOM%'
+                    Data_Source_type in (
+                        'facebookads', 'snapchat'
+                    ) and lower(campaign) like '%_ec_%' and lower(campaign) not like '%ecom%'
                 then 'PERF'
-               when data_source_type ='adwords' and media_type='Display' 
-                and campaign not like '%_EC_%' then 'OTHERS'                
-               when data_source_type ='adwords' or media_type='Display' 
-                and campaign not like '%_EC_%' then 'PERF'
-                when data_source_type in ('rtbhouse', 'criteo', 'awin', 'tiktok')
+                when Data_Source_type = 'facebook' and campaign like '%_CS_TRAF_%' and lower(campaign) not like '%coad%'
+                then 'PERF'
+                when
+                    Data_Source_type = 'adwords'
+                    and media_type = 'Display'
+                    and campaign not like '%_EC_%'
+                then 'OTHERS'
+                when
+                    Data_Source_type = 'adwords'
+                    /*--and media_type = 'Display'*/
+                    and lower(campaign) like '%_ec_%'
+                then 'PERF'
+                when Data_Source_type in ('criteo') and lower(campaign) not like '%trademarketing%' then 'PERF'  
+                when Data_Source_type in ('rtbhouse', 'awin', 'tiktok')                
                 then 'PERF'
                 else 'OTHERS'
-            end as campaign_type,
+             end as campaign_type,
+        
             case
-                when data_source_type in ('facebookads', 'tiktok', 'snapchat')
+                when Data_Source_type in ('facebookads', 'tiktok', 'snapchat')
                 then 'Social'
-                when data_source_type in ('rtbhouse', 'criteo')
+                when Data_Source_type in ('rtbhouse', 'criteo')
                 then 'Retargeting'
-                when data_source_type in ('awin')
+                when Data_Source_type ='SCANDI' and lower(campaign) like '%_bra_%' then 'Paid Search Brand'
+                when Data_Source_type in ('awin')
                 then 'Affiliation'
                 when
-                    data_source_type = 'adwords'
-                    and campaign like '%BrandSephora%'
-                    or campaign like '%Brand Sephora%'
-                    or campaign like '%BrandBidding%'
-                    or campaign like '%Core-Brand%'
-                    or campaign like '%BRA-Exact%'
-                    or campaign like 'sephora brand'
+                    Data_Source_type = 'adwords'
+                    and lower(campaign) like '%brandsephora%'
+                    or lower(campaign) like '%brand sephora%'
+                    or lower(campaign) like '%brandbidding%'
+                    or lower(campaign) like '%core-brand%'
+                    or lower(campaign) like '%bra-exact%'
+                    or lower(campaign) like '%sephora brand%'
+                    or lower(campaign) like '%exclusivebrand%'
                 then 'Paid Search Brand'
                 /*
                 when
-                    data_source_type = 'adwords'
+                    regie_source = 'adwords'
                     and campaign not like '%BrandSephora%'
                     or campaign not like '%Brand Sephora%'
                     or campaign not like '%BrandBidding%'

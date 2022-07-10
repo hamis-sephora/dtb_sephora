@@ -27,6 +27,7 @@ select
                     and media_type = 'Display'
                     and campaign not like '%_EC_%'
                 then 'OTHERS'
+                when regie_source='adwords' and lower(campaign) like '%_perf%' then 'PERF'
                 when
                     regie_source = 'adwords'
                     /*--and media_type = 'Display'*/

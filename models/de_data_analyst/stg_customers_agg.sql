@@ -32,3 +32,4 @@ select
     {% endfor %}
 from {{ source('de', 'de_data_crm') }}
 group by 1
+order by transactions desc 

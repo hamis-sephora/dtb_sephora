@@ -6,18 +6,18 @@
 }}
 
 select
-    distinct 
-    event_date,
-    country,
+    Date , 
+    country, 
+    case when country in ('KSA', 'UAE') then 'ME' else country end as country_grouping,
     platform,
-    name,
-    medium,
-    source,
+    ga_campaign,
+    ga_medium,
+    ga_source,
     case
         when
-            lower(medium) like '%socialmedia%' or lower(
-                medium
-            ) like '%social%' or lower(medium) in (
+            lower(ga_medium) like '%socialmedia%' or lower(
+                ga_medium
+            ) like '%social%' or lower(ga_medium) in (
                 'fb',
                 'tw',
                 'ig',
@@ -29,7 +29,7 @@ select
                 'pinterest',
                 'igshopping',
                 'tiktok'
-            ) or lower(source) in (
+            ) or lower(ga_source) in (
                 'fb',
                 'tw',
                 'ig',   
@@ -41,59 +41,58 @@ select
                 'pinterest',
                 'igshopping',
                 'tiktok'
-            ) or lower(medium) like '%influencers%' or lower(medium) like '%instagram%' or lower(medium) like '%facebook%'
+            ) or lower(ga_medium) like '%influencers%' or lower(ga_medium) like '%instagram%' or lower(ga_medium) like '%facebook%'
         then 'Social'
-        when lower(source) = 'games' or lower(medium) = 'games'
+        when lower(ga_source) = 'games' or lower(ga_medium) = 'games'
         then 'Games'
         when
-            lower(medium) in ('rtg', 'retargeting') or lower(source) in (
+            lower(ga_medium) in ('rtg', 'retargeting') or lower(ga_source) in (
                 'crt', 'criteo', 'rtghouse', 'rtb'
-            ) or lower(name) like '%GDN%'
+            ) or lower(ga_campaign) like '%GDN%'
         then 'Retargeting'
-        when lower(medium) like '%partner%'
+        when lower(ga_medium) like '%partner%'
         then 'Partnership'
         when
-            lower(medium) like '%email%' or lower(
-                medium
-            ) like '%splio%' or medium = 'sms' or lower(medium) like '%push-web%' or lower(medium) like '%ecrm%' or lower(medium) like '%crm%' or lower(medium) like '%in-app%' or lower(medium) like '%push-app%'
+            lower(ga_medium) like '%email%' or lower(
+                ga_medium
+            ) like '%splio%' or ga_medium = 'sms' or lower(ga_medium) like '%push-web%' or lower(ga_medium) like '%ecrm%' or lower(ga_medium) like '%crm%' or lower(ga_medium) like '%in-app%' or lower(ga_medium) like '%push-app%'
         then 'Emailing'
         when
-            lower(medium) = 'affiliate' or lower(
-                source
-            ) like '%awin%' or lower(source) like '%cj' or lower(
-                source
-            ) like '%affiliation%' or lower(source) like '%idealo%' or lower(medium) like '%affiliation%'
+            lower(ga_medium) = 'affiliate' or lower(
+                ga_source
+            ) like '%awin%' or lower(ga_source) like '%cj' or lower(
+                ga_source
+            ) like '%affiliation%' or lower(ga_source) like '%idealo%' or lower(ga_medium) like '%affiliation%'
         then 'Affiliation'
-        when lower(medium) like '%cpc%' and lower(name) like '%brand%' or lower(medium) like '%cpc%' and lower(name) like '%brandsephora%'
+        when lower(ga_medium) like '%cpc%' and lower(ga_campaign) like '%brand%' or lower(ga_medium) like '%cpc%' and lower(ga_campaign) like '%brandsephora%'
         then 'Paid Search Brand'
-        when lower(medium) like '%cpc' and lower(name) not like '%brand%'or lower(medium) like '%cpc%' and lower(source) like '%google%'
+        when lower(ga_medium) like '%cpc' and lower(ga_campaign) not like '%brand%'or lower(ga_medium) like '%cpc%' and lower(ga_source) like '%google%'
         then 'Paid Search Non Brand'
-        when lower(medium) like '%display%' or
-         lower(source) like '%display%' or 
-         lower(medium) like '%cpm%' or 
-         lower(medium) like '%banner%' or 
-         lower(medium) like '%youtube%' or 
-         lower(medium) like '%video%' or 
-         lower(source) like '%youtube%' or
-         lower(medium) like '%media%' 
+        when lower(ga_medium) like '%display%' or
+         lower(ga_source) like '%display%' or 
+         lower(ga_medium) like '%cpm%' or 
+         lower(ga_medium) like '%banner%' or 
+         lower(ga_medium) like '%youtube%' or 
+         lower(ga_medium) like '%video%' or 
+         lower(ga_source) like '%youtube%' or
+         lower(ga_medium) like '%media%' 
          then 'Media' 
-        when lower(medium) like '%organic%' then 'Organic Search'
-        when lower(medium) like '%referral%' then 'Referral'
-        when lower(source) like '%apple%' then 'Search Apple'
-        when lower(source) = '(direct)' then 'Direct'
-        when lower(medium) = '%search%' and lower(name) like '%appdownload%' then 'App Download'
-        when lower(medium) like '%in-app%' or lower(medium) like '%push-app%' then 'Emailing'
+        when lower(ga_medium) like '%organic%' then 'Organic Search'
+        when lower(ga_medium) like '%referral%' then 'Referral'
+        when lower(ga_source) like '%apple%' then 'Search Apple'
+        when lower(ga_source) = '(direct)' then 'Direct'
+        when lower(ga_medium) = '%search%' and lower(ga_campaign) like '%appdownload%' then 'App Download'
+        when lower(ga_medium) like '%in-app%' or lower(ga_medium) like '%push-app%' then 'Emailing'
         else '(Other)'
     end as channel_grouping,
     sum(sessions) as sessions,
-    sum(addtocart) as addtocart,
-    sum(add_to_cart) as add_to_cart,
-    sum(users) as users,
+    sum(add_to_cart) as addtocart,
     sum(transactions) as transactions, 
-    sum(revenue) as revenue    
-from {{ source('ga4', 'ga4_data') }} 
-where platform != 'WEB'
-group by 1, 2, 3, 4, 5, 6
+    sum(revenue_euro) as revenue_euro, 
+    sum(total_revenue) as total_revenue,         
+from {{ ref('stg_ga4_raw_data') }}
+where platform != 'web'
+group by 1, 2, 3, 4, 5, 6, 7
 
 
 

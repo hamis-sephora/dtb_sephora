@@ -70,12 +70,18 @@ sources:
         tags: ['Funnel Media Data']
         meta:
           contains_pii: false
-          owner : "Web Data Team -> Youri"
+          owner : "EME Data Team -> Hamis"
       - name: funnel_account_orga    
         tags: ['Funnel Media Data']
         meta:
           contains_pii: false
-          owner : "Web Data Team -> Youri"
+          owner : "EME Data Team -> Hamis"
+      - name: funnel_ga4_data    
+        tags: ['Funnel Media Data']
+        meta:
+          contains_pii: false
+          owner : "EME Data Team -> Hamis"
+
 
   - name: cac_mvp
     loader: BigQuery

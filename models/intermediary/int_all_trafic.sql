@@ -32,13 +32,13 @@ with
             date,
             extract(week(sunday) from date) as week,
             case when country in ('DK','SE') then 'SCANDI' else country end as country,
-            channel,
+            channel_grouping as channel,
             'app' as platform,
             sum(sessions) as sessions,
             sum(addtocart) as addtocart,
             0 as sessions_rattrapee,
             sum(transactions) as transactions,
-            sum(revenue_local) as revenue_local,
+            sum(revenue_euro) as revenue_local,
             sum(revenue_euro) as revenue_euro,
         from {{ ref('stg_ga4_global') }}
         group by 1, 2, 3, 4, 5

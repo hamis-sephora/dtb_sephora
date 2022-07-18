@@ -12,7 +12,7 @@
 select 
        date, 
        week, 
-       case when country in ('DK','SE') then 'SCANDI' else country end as country,
+       case when country in ('DK','SE', 'Scandi') then 'SCANDI' else country end as country,
        channel,
        channel_grouping ,
        platform, 

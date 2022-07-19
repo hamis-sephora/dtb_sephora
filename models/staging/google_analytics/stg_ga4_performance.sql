@@ -5,6 +5,49 @@
   )
 }}
 
+with old_data as (
+
+  select 
+  PARSE_DATE('%Y%m%d',event_date) as Date, 
+  country, 
+  platform, 
+  name as ga_campaign, 
+  medium as ga_medium, 
+  source as ga_source, 
+  sessions as sessions, 
+  0  as add_to_cart, 
+  0 as transactions, 
+  0 as revenue_euro, 
+  0 as total_revenue
+FROM `s4a-digital-dwh-prd.eme_media_data.ga4_data`
+where PARSE_DATE('%Y%m%d',event_date)  < '2021-09-01'
+), 
+
+new_data_funnel as (
+    select 
+    Date , 
+    country , 
+    platform, 
+    ga_campaign, 
+    ga_medium, 
+    ga_source, 
+    case when date < '2021-09-01' then 0 else sessions end as sessions, 
+    add_to_cart, 
+    transactions, 
+    revenue_euro, 
+    total_revenue
+    from {{ ref('stg_ga4_raw_data') }}
+) , 
+
+consolidation as ( 
+
+    select * from old_data
+    union all 
+    select * from new_data_funnel
+    where platform != 'web'
+
+)
+
 select
     Date , 
     country, 
@@ -90,10 +133,9 @@ select
     sum(transactions) as transactions, 
     sum(revenue_euro) as revenue_euro, 
     sum(total_revenue) as total_revenue,         
-from {{ ref('stg_ga4_raw_data') }}
-where platform != 'web'
+from consolidation
 group by 1, 2, 3, 4, 5, 6, 7
-order by date asc
+order by date desc
 
 
 

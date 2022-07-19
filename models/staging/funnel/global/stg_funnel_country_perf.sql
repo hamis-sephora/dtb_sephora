@@ -15,8 +15,14 @@ select
       campaign,
       media_type, 
             case
-                when lower(campaign)  like '%coads%' then 'OTHERS'
-                when regie_source in ('facebookads', 'snapchat') and lower(campaign) like '%_ec_%' and lower(campaign) not like '%ecom%'
+               when campaign in ('SephoraEUR_SR_FRA_coad-azzaro_GEN_OTH_202106_EC_PURC_FI_CRD_FRA_EUR_', 
+                                 'SephoraEUR_SR_FRA_coad-sephoracollection-snapchat_UNI_OTH_202205_AW_REAC_SN_MOB_EUR_LENS', 
+                                 'SephoraEUR_SR_FRA_coad-ilia-lancement_GEN_OTH_202207_EC_DTS_FI_CRD_EUR_', 
+                                 'SephoraEUR_SR_DEU_coad-huda-unstoppable_WOM_OTH_202206_EC_PURC_FI_CRD_EUR_Phase3_GLB0002ESA', 
+                                 'SephoraEUR_SR_FR_coad-dior-fdm_GEN_OTH_202205_EC_PURC_FI_CRD_FRA_EUR_COLAD', 
+                                 'SephoraEUR_SR_FR_coad-dior-fdm_GEN_OTH_202205_EC_PURC_FI_CRD_FRA_EUR_CAR') then 'OTHERS'
+                when lower(campaign)  like '%coad%' then 'OTHERS'
+                when regie_source in ('facebookads', 'snapchat') and lower(campaign) like '%_ec_%' and lower(campaign) not like '%ecom%' or lower(campaign) not like '%coad%'
                 then 'PERF'
                 when regie_source = 'facebook' and campaign like '%_CS_TRAF_%' 
                 then 'PERF'
@@ -25,7 +31,7 @@ select
                 when regie_source = 'adwords' and media_type = 'Display' and campaign not like '%_EC_%'
                 then 'OTHERS'
                 when regie_source='adwords' and lower(campaign) like '%_perf%' then 'PERF'
-                when regie_source = 'adwords' /*--and media_type = 'Display'*/ and lower(campaign) like '%_ec_%'
+                when regie_source = 'adwords' /*--and media_type = 'Display'*/ and lower(campaign) like '%_ec_%' and lower(campaign) not like '%coad%'
                 then 'PERF'
                 when regie_source in ('criteo') and lower(campaign) not like '%trademarketing%' then 'PERF'  
                 when regie_source in ('rtbhouse', 'awin')

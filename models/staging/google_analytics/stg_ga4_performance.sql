@@ -135,7 +135,7 @@ select
     sum(total_revenue) as total_revenue,         
 from consolidation
 group by 1, 2, 3, 4, 5, 6, 7
-order by date desc
+order by date asc
 
 
 

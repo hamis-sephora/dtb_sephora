@@ -15,25 +15,17 @@ select
       campaign,
       media_type, 
             case
-                when
-                    regie_source in (
-                        'facebookads', 'snapchat'
-                    ) and lower(campaign) like '%_ec_%' and lower(campaign) not like '%ecom%'
+                when lower(campaign)  like '%coads%' then 'OTHERS'
+                when regie_source in ('facebookads', 'snapchat') and lower(campaign) like '%_ec_%' and lower(campaign) not like '%ecom%'
                 then 'PERF'
-                when regie_source = 'facebook' and campaign like '%_CS_TRAF_%' and lower(campaign) not like '%coad%'
+                when regie_source = 'facebook' and campaign like '%_CS_TRAF_%' 
                 then 'PERF'
                 when regie_source = 'tiktok' and lower(campaign) not like '%coad%'
                 then 'PERF'                
-                when
-                    regie_source = 'adwords'
-                    and media_type = 'Display'
-                    and campaign not like '%_EC_%'
+                when regie_source = 'adwords' and media_type = 'Display' and campaign not like '%_EC_%'
                 then 'OTHERS'
                 when regie_source='adwords' and lower(campaign) like '%_perf%' then 'PERF'
-                when
-                    regie_source = 'adwords'
-                    /*--and media_type = 'Display'*/
-                    and lower(campaign) like '%_ec_%'
+                when regie_source = 'adwords' /*--and media_type = 'Display'*/ and lower(campaign) like '%_ec_%'
                 then 'PERF'
                 when regie_source in ('criteo') and lower(campaign) not like '%trademarketing%' then 'PERF'  
                 when regie_source in ('rtbhouse', 'awin')

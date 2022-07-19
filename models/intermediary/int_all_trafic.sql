@@ -169,6 +169,6 @@ select
     revenue_local,
     revenue_euro,
 from data
-order by date desc 
+order by platform asc  , date asc 
 
 

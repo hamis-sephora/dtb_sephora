@@ -24,7 +24,7 @@ select
        revenue_local, 
        revenue_euro
 from {{ref('int_all_trafic')}} 
-where country not like ('RU') and extract(year from date)=2021 and platform = 'app' and extract(month from date)=7
+where country not like ('RU') 
 order by date desc 
 
 

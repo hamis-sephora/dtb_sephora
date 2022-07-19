@@ -13,7 +13,7 @@ with
 
 select
     date,
-    country,
+    case when country in ('SE','DK', 'SCANDI') then 'SCANDI' else country end as country,
     channel_grouping,
     sum(cost) as cost,
     sum(impressions) as impressions,

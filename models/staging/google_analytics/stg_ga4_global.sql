@@ -12,7 +12,7 @@
         select
             Date,
             country_grouping as country,
-            case when platform in ('iOS', 'Android') then 'app' else 'website' end as platform,
+            case when platform in ('iOS', 'Android', 'IOS','ANDROID') then 'app' else 'website' end as platform,
             concat(ga_source,'/',ga_medium) as channel, 
             channel_grouping,
             sum(sessions) as sessions,

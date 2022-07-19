@@ -22,6 +22,8 @@ select
                 then 'PERF'
                 when regie_source = 'facebook' and campaign like '%_CS_TRAF_%' and lower(campaign) not like '%coad%'
                 then 'PERF'
+                when regie_source = 'tiktok' and lower(campaign) not like '%coad%'
+                then 'PERF'                
                 when
                     regie_source = 'adwords'
                     and media_type = 'Display'
@@ -34,7 +36,7 @@ select
                     and lower(campaign) like '%_ec_%'
                 then 'PERF'
                 when regie_source in ('criteo') and lower(campaign) not like '%trademarketing%' then 'PERF'  
-                when regie_source in ('rtbhouse', 'awin', 'tiktok')
+                when regie_source in ('rtbhouse', 'awin')
                 then 'PERF'
                 else 'OTHERS'
              end as campaign_type,
@@ -54,8 +56,8 @@ select
                     or lower(campaign) like '%brandbidding%'
                     or lower(campaign) like '%core-brand%'
                     or lower(campaign) like '%bra-exact%'
-                    or lower(campaign) like '%sephora brand%'
-                    or lower(campaign) like '%exclusivebrand%'
+                    --or lower(campaign) like '%sephora brand%'
+                    --or lower(campaign) like '%exclusivebrand%'
                 then 'Paid Search Brand'
                 /*
                 when

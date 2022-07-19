@@ -93,6 +93,7 @@ select
 from {{ ref('stg_ga4_raw_data') }}
 where platform != 'web'
 group by 1, 2, 3, 4, 5, 6, 7
+order by date asc
 
 
 

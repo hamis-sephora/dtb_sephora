@@ -38,7 +38,7 @@ select
   View_type___UA__Google_Analytics as view_type,
   Website_URL___UA__Google_Analytics as website_url
  from {{ source('funnel', 'funnel_ga4_data') }} 
-
+order by date asc 
 
 
 

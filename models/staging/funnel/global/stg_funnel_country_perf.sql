@@ -22,6 +22,8 @@ select
                                  'SephoraEUR_SR_FR_coad-dior-fdm_GEN_OTH_202205_EC_PURC_FI_CRD_FRA_EUR_COLAD', 
                                  'SephoraEUR_SR_FR_coad-dior-fdm_GEN_OTH_202205_EC_PURC_FI_CRD_FRA_EUR_CAR') then 'OTHERS'
                 when lower(campaign)  like '%coad%' then 'OTHERS'
+                when lower(campaign) like '%_aw_%' or lower(campaign) like '%_cs_%' 
+                then 'OTHERS'                
                 when regie_source in ('facebookads', 'snapchat') and lower(campaign) like '%_ec_%' and lower(campaign) not like '%ecom%' or lower(campaign) not like '%coad%'
                 then 'PERF'
                 when regie_source = 'facebook' and campaign like '%_CS_TRAF_%' 
